@@ -2,18 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\AdminResource\Pages;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class AdminResource extends Resource
 {
     protected static ?string $model = User::class;
 
@@ -25,6 +22,16 @@ class UserResource extends Resource
         return $form
         ->schema([
             Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+                
+            Forms\Components\TextInput::make('phone') 
+                ->numeric()
+                ->inputMode('numeric')
+                ->required()
+                ->maxLength(255),
+            
+            Forms\Components\TextInput::make('address')
                 ->required()
                 ->maxLength(255),
 
@@ -59,10 +66,14 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                 ->searchable(),
+                Tables\Columns\TextColumn::make('phone')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('address')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('role')
-                ->sortable(),
+                ->searchable(),
                 Tables\Columns\ImageColumn::make('image'),
             ])
             ->filters([
@@ -74,6 +85,7 @@ class UserResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
